@@ -1,0 +1,16 @@
+---
+presto__user: presto
+presto__version: "0.61"
+
+presto__environment: production
+presto__xmx: 1G
+presto__http_port: 8080
+presto__task_max_memory: 1GB
+
+presto__base: /opt
+presto__dir: "{{ presto__base }}/presto-server-{{ presto__version }}"
+presto__tar_dir: "{{ presto__base }}"
+presto__data_dir: "/var/lib/presto"
+
+presto__hive_metastore_port: 9083
+presto__hive_config_resources: "/etc/hadoop/conf/core-site.xml,/etc/hadoop/conf/hdfs-site.xml"

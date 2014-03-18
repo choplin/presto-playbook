@@ -1,0 +1,5 @@
+---
+url: http://central.maven.org/maven2/com/facebook/presto/presto-server/{{ presto__version }}/{{ tar_file }}
+tar_file: presto-server-{{ presto__version }}.tar.gz
+
+coordinator_fqdn: "{{ hostvars[groups[presto__coordinator_group][0]]['ansible_fqdn'] }}"

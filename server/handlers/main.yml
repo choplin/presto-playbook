@@ -1,0 +1,4 @@
+---
+- name: restart presto server
+  shell: "{{ presto__dir }}/bin/launcher stop && {{ presto__dir }}/bin/launcher start"
+  sudo_user: "{{ presto__user }}"

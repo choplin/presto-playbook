@@ -1,0 +1,4 @@
+---
+jar_file: "presto-cli-{{ presto__version }}-executable.jar"
+
+url: "http://central.maven.org/maven2/com/facebook/presto/presto-cli/{{ presto__version }}/{{ jar_file }}"

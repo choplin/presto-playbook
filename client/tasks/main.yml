@@ -1,0 +1,16 @@
+---
+- name: install jdk
+  yum: name=java-1.7.0-openjdk state=installed
+  tags: prest_client
+
+- name: get presto client from remote
+  get_url: url={{ url }} dest={{ presto__base }}/{{ jar_file }}
+  environment: proxy_env
+  tags: prest_client
+
+- name: set execute permission to jar
+  file: path={{ presto__base }}/{{ jar_file }} state=file mode=0755
+  tags: prest_client
+
+- name: create a link to prest jar
+  file: src={{ presto__base }}/{{ jar_file }} dest={{ presto__base }}/presto state=link

@@ -1,0 +1,47 @@
+---
+- name: install jdk
+  yum: name=java-1.7.0-openjdk state=installed
+
+- name: create presto user
+  user: name={{ presto__user }} state=present
+
+- name: get presto from remote
+  get_url: url={{ url }} dest={{ presto__tar_dir }}/{{ tar_file }}
+  environment: proxy_env
+
+- name: unarchive tar file
+  shell:
+    chdir={{ presto__base }}
+    creates={{ presto__dir }}
+    tar zxf {{ tar_file }} && chown -R {{ presto__user }}:{{ presto__user }} {{ presto__dir }}
+
+- name: create presto directories
+  file: path={{ item }} state=directory owner={{ presto__user }} group={{ presto__user }}
+  with_items:
+    - "{{ presto__data_dir }}"
+    - "{{ presto__dir }}/etc"
+    - "{{ presto__dir }}/etc/catalog"
+
+- name: install presto config files
+  template: src={{ item }}.j2 dest={{ presto__dir }}/etc/{{ item }} owner={{ presto__user }} group={{ presto__user }}
+  with_items:
+    - node.properties
+    - jvm.config
+    - config.properties
+    - log.properties
+  notify:
+    - restart presto server
+
+- name: install presto catalog files
+  template: src=catalog/{{ item }}.j2 dest={{ presto__dir }}/etc/catalog/{{ item }} owner={{ presto__user }} group={{ presto__user }}
+  with_items:
+    - hive.properties
+    - jmx.properties
+  notify:
+    - restart presto server
+
+- name: set a cron job for removing logs
+  cron: minute=10 hour=0
+        user="{{ presto__user }}" job="tmpwatch -m 72 {{ presto__data_dir }}/var/log"
+        name="set a cron job for removing logs"
+        cron_file=remove_presto_log
